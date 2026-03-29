@@ -3,11 +3,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/herb01
     username: root
-    password: mengliyou
+    password: hao1230..
   data:
     redis:
       host: localhost
       port: 6379
+      password: ""
   servlet:
     multipart:
       max-file-size: 5MB

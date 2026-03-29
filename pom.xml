@@ -55,8 +55,10 @@
 
 <!--    lombok依赖-->
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.30</version> <!-- 或最新版 -->
+        <scope>provided</scope>
     </dependency>
 
 <!--    spring validation起步依赖-->

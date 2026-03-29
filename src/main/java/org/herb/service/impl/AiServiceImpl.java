@@ -10,6 +10,8 @@ import org.herb.utils.zhipu.oapi.Constants;
 import com.zhipu.oapi.service.v4.model.*;
 import io.reactivex.Flowable;
 import org.herb.service.AiService;
+import org.herb.service.DiagnosisHistoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ import static com.zhipu.oapi.service.v4.api.ChatApiService.defaultObjectMapper;
 
 @Service
 public class AiServiceImpl implements AiService {
+
+    @Autowired
+    private DiagnosisHistoryService diagnosisHistoryService;
 
     private static final String API_KEY = "77ac40f6a6004646825d2561dcf9719d.g60df54MeiEE6Nkj";
     private static final ClientV4 client = new ClientV4.Builder(API_KEY).build();
@@ -100,27 +105,33 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public String herbQA(String herbName, String question) {
-        String prompt = "你是一位经验丰富的中医药专家。关于中药\"" + herbName + "\"，" + question + 
+    public String herbQA(Integer userId, String herbName, String question) {
+        String prompt = "你是一位经验丰富的中医药专家。关于中药\"" + herbName + "\"，" + question +
                        "请从中医专业角度详细解答，包括其性味归经、功效主治、用法用量、注意事项等方面。";
-        return sseInvoke(prompt);
+        String answer = sseInvoke(prompt);
+        // 保存历史记录
+        diagnosisHistoryService.addDiagnosisHistory(userId, "herb_qa", herbName + ": " + question, answer);
+        return answer;
     }
 
     @Override
-    public String prescriptionAnalysis(String prescriptionData) {
-        String prompt = "你是一位资深的中医方剂学专家。请分析以下方剂信息：\n" + prescriptionData + 
+    public String prescriptionAnalysis(Integer userId, String prescriptionData) {
+        String prompt = "你是一位资深的中医方剂学专家。请分析以下方剂信息：\n" + prescriptionData +
                        "\n请从以下几个方面进行分析：\n" +
                        "1. 方剂组成分析\n" +
                        "2. 配伍意义\n" +
                        "3. 功效与主治\n" +
                        "4. 配伍禁忌\n" +
                        "5. 使用注意事项";
-        return sseInvoke(prompt);
+        String answer = sseInvoke(prompt);
+        // 保存历史记录
+        diagnosisHistoryService.addDiagnosisHistory(userId, "prescription_analysis", prescriptionData, answer);
+        return answer;
     }
 
     @Override
-    public String diagnosis(String symptoms) {
-        String prompt = "你是一位经验丰富的中医师。患者描述的症状如下：\n" + symptoms + 
+    public String diagnosis(Integer userId, String symptoms) {
+        String prompt = "你是一位经验丰富的中医师。患者描述的症状如下：\n" + symptoms +
                        "\n请基于中医理论进行辨证分析，包括：\n" +
                        "1. 病因分析\n" +
                        "2. 病机分析\n" +
@@ -129,6 +140,9 @@ public class AiServiceImpl implements AiService {
                        "5. 推荐方药\n" +
                        "6. 生活调养建议\n\n" +
                        "注意：这只是初步的辨证分析，建议患者到正规中医院就诊。";
-        return sseInvoke(prompt);
+        String answer = sseInvoke(prompt);
+        // 保存历史记录
+        diagnosisHistoryService.addDiagnosisHistory(userId, "diagnosis", symptoms, answer);
+        return answer;
     }
 }

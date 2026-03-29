@@ -4,29 +4,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
-import java.util.concurrent.TimeUnit;
-
-@SpringBootTest //如果在测试类上添加这个注解，将来单元测试方法执行之前，会先初始化spring容器
+@SpringBootTest
 public class RedisTest {
+
+    // 替换成这个，专门存字符串，无乱码
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     @Test
-    public void testSet(){
-        //往redis中存储一个键值对 StringRedisTemplate
-        ValueOperations<String, String>  operations = stringRedisTemplate.opsForValue();
+    public void testRedisConnection() {
+        // 1. 写入数据
+        stringRedisTemplate.opsForValue().set("test_key", "Hello Redis!");
 
-        operations.set("username","zhangsan");
-        operations.set("id","1",15, TimeUnit.SECONDS); //过期时间15s
-    }
+        // 2. 读取数据
+        String value = stringRedisTemplate.opsForValue().get("test_key");
 
-    @Test
-    public void testGet(){
-        //从redis中获取一个键值对
-        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-
-        System.out.println(operations.get("username"));
+        // 3. 打印结果
+        System.out.println("✅ Redis 读取结果：" + value);
     }
 }
