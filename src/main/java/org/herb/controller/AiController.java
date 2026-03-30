@@ -32,17 +32,19 @@ public class AiController {
     }
 
     @PostMapping("/prescription-analysis")
-    public Result<String> prescriptionAnalysis(@RequestBody String prescriptionData) {
+    public Result<String> prescriptionAnalysis(@RequestBody Map<String, String> params) {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
+        String prescriptionData = params.get("prescriptionData");
         String analysis = aiService.prescriptionAnalysis(userId, prescriptionData);
         return Result.success(analysis);
     }
 
     @PostMapping("/diagnosis")
-    public Result<String> diagnosis(@RequestBody String symptoms) {
+    public Result<String> diagnosis(@RequestBody Map<String, String> params) {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
+        String symptoms = params.get("symptoms");
         String result = aiService.diagnosis(userId, symptoms);
         return Result.success(result);
     }

@@ -34,7 +34,11 @@ public class UserController {
 
     //注册
     @PostMapping("/register") //注册接口的请求方式是post
-    public Result register(@Pattern(regexp = "^\\S{5,16}$") String username, @Pattern(regexp = "^\\S{5,16}$") String password, @Validated String email, String role){
+    public Result register(@RequestBody Map<String, String> params){
+        String username = params.get("username");
+        String password = params.get("password");
+        String email = params.get("email");
+        String role = params.get("role");
         //下面这样写太繁琐了，spring validation可以使用注解完成参数校验
 //        if(username != null && username.length() >= 5 && username.length() <= 16 &&
 //        password != null && password.length() >= 5 && password.length() <= 16
@@ -65,7 +69,9 @@ public class UserController {
 
     //登录
     @PostMapping("/login")
-    public Result<String> login(@Pattern(regexp = "^\\S{5,16}$") String username, @Pattern(regexp = "^\\S{5,16}$") String password){
+    public Result<String> login(@RequestBody Map<String, String> params){
+        String username = params.get("username");
+        String password = params.get("password");
         //根据用户名查询用户
         User loginUser = userService.FindByUserName(username);
 
